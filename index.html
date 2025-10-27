@@ -172,6 +172,70 @@
       gap: 16px;
     }
 
+    #history {
+      margin-top: 32px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(30, 136, 229, 0.18);
+      padding: 24px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #history h2 {
+      margin: 0;
+      color: var(--accent);
+    }
+
+    #history-empty {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    #history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    #history-list li {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(18, 38, 58, 0.12);
+      background: rgba(30, 136, 229, 0.08);
+      font-weight: 500;
+    }
+
+    #history-clear {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(30, 136, 229, 0.4);
+      padding: 8px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    #history-clear:hover:not(:disabled) {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #history-clear:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     #results h2 {
       margin: 0;
       color: var(--accent);
@@ -481,6 +545,15 @@
       <p id="motivation">Tu es prêt à progresser 🚴‍♂️ !</p>
     </section>
 
+    <section id="history" aria-live="polite">
+      <div class="history-header">
+        <h2>Historique des calculs</h2>
+        <button id="history-clear" type="button">Effacer l’historique</button>
+      </div>
+      <p id="history-empty">Réalise un calcul pour remplir l’historique.</p>
+      <ul id="history-list" aria-live="polite"></ul>
+    </section>
+
     <section aria-labelledby="guide-tests">
       <h2 id="guide-tests">Comprendre tes tests FTP</h2>
       <p>Le test de 20 minutes est rapide et fiable. Tu pédales à fond pendant vingt minutes puis le calculateur retire 5&nbsp;% pour estimer ton effort sur une heure. Le test ramp augmente la puissance chaque minute jusqu’à l’échec : nous retenons 75&nbsp;% de la dernière minute complète.</p>
@@ -545,6 +618,9 @@
     const zoneTable = document.getElementById('zone-table');
     const planList = document.getElementById('plan-list');
     const motivation = document.getElementById('motivation');
+    const historyList = document.getElementById('history-list');
+    const historyEmpty = document.getElementById('history-empty');
+    const historyClearBtn = document.getElementById('history-clear');
 
     const workouts = {
       debutant: [
@@ -629,6 +705,59 @@
       });
     }
 
+    function readHistory() {
+      try {
+        const stored = localStorage.getItem('ftp-history');
+        if (!stored) return [];
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        console.error('Impossible de lire l\'historique FTP :', error);
+        return [];
+      }
+    }
+
+    function formatHistoryDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      return date.toLocaleString('fr-FR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function renderHistory() {
+      const history = readHistory();
+      historyList.innerHTML = '';
+
+      if (!history.length) {
+        historyEmpty.hidden = false;
+        historyList.hidden = true;
+        historyClearBtn.disabled = true;
+        return;
+      }
+
+      historyEmpty.hidden = true;
+      historyList.hidden = false;
+      historyClearBtn.disabled = false;
+
+      history.forEach(entry => {
+        const li = document.createElement('li');
+        const modeLabel = {
+          '20min': 'Test 20 minutes',
+          ramp: 'Test ramp',
+          niveau: 'Estimation par niveau'
+        }[entry.mode] || entry.mode;
+        li.textContent = `${formatHistoryDate(entry.date)} – ${modeLabel} : ${entry.ftp} W (${entry.wkg} W/kg)`;
+        historyList.appendChild(li);
+      });
+    }
+
     ftpForm.addEventListener('submit', event => {
       event.preventDefault();
       const mode = [...modeRadios].find(r => r.checked)?.value;
@@ -672,7 +801,25 @@
       renderPlan(levelKey);
 
       motivation.textContent = 'Tu es prêt à progresser 🚴‍♂️ ! Continue sur cette lancée !';
+
+      const history = readHistory();
+      const entry = {
+        date: new Date().toISOString(),
+        mode,
+        ftp: Math.round(ftp),
+        wkg: parseFloat(wkg.toFixed(2))
+      };
+      history.unshift(entry);
+      localStorage.setItem('ftp-history', JSON.stringify(history));
+      renderHistory();
     });
+
+    historyClearBtn.addEventListener('click', () => {
+      localStorage.removeItem('ftp-history');
+      renderHistory();
+    });
+
+    renderHistory();
   </script>
 </body>
 </html>
