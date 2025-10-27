@@ -209,6 +209,7 @@
     th, td {
       padding: 12px;
       text-align: left;
+      vertical-align: top;
     }
 
     th {
@@ -230,9 +231,47 @@
       border-radius: 999px;
       font-size: 0.85rem;
       font-weight: 600;
-      background: rgba(30, 136, 229, 0.15);
-      color: var(--accent);
+      border: 1px solid var(--zone-color, var(--accent));
+      background: rgba(30, 136, 229, 0.08);
+      background: color-mix(in srgb, var(--zone-color, var(--accent)) 18%, transparent);
+      color: var(--zone-color, var(--accent));
     }
+
+    .zone-range {
+      display: block;
+      font-weight: 600;
+    }
+
+    .zone-duration {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .zone-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(18, 38, 58, 0.12);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .zone-bar__fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      margin-left: var(--fill-start, 0);
+      width: var(--fill-width, 100%);
+      background: var(--zone-color, var(--accent));
+    }
+
+    .zone-bar--z1 { --zone-color: #9CCC65; }
+    .zone-bar--z2 { --zone-color: #66BB6A; }
+    .zone-bar--z3 { --zone-color: #FFCA28; }
+    .zone-bar--z4 { --zone-color: #FFA726; }
+    .zone-bar--z5 { --zone-color: #FB8C00; }
+    .zone-bar--z6 { --zone-color: #F4511E; }
+    .zone-bar--z7 { --zone-color: #E53935; }
 
     .plan {
       border-radius: 14px;
@@ -425,51 +464,16 @@
       <div>
         <h3>Zones d’entraînement (table Coggan)</h3>
         <table aria-describedby="zone-helper">
-          <caption id="zone-helper">Plages de puissance basées sur ta FTP actuelle.</caption>
+          <caption id="zone-helper">Plages de puissance basées sur ta FTP actuelle. La barre colorée illustre la zone de travail, la colonne RPE décrit l’effort perçu et la dernière colonne précise l’objectif et la durée conseillée.</caption>
           <thead>
             <tr>
               <th scope="col">Zone</th>
               <th scope="col">Plage de puissance</th>
-              <th scope="col">Objectif</th>
+              <th scope="col">RPE / sensations</th>
+              <th scope="col">Objectif &amp; durée</th>
             </tr>
           </thead>
-          <tbody id="zone-table">
-            <tr>
-              <td><span class="zone-tag">Z1</span> Endurance active</td>
-              <td>0 – 0 W</td>
-              <td>Récupération facile</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z2</span> Endurance</td>
-              <td>0 – 0 W</td>
-              <td>Sorties longues</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z3</span> Tempo</td>
-              <td>0 – 0 W</td>
-              <td>Souffle régulier</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z4</span> Seuil</td>
-              <td>0 – 0 W</td>
-              <td>Allure chrono</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z5</span> VO2max</td>
-              <td>0 – 0 W</td>
-              <td>Efforts intenses</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z6</span> Anaérobie</td>
-              <td>0 – 0 W</td>
-              <td>Sprints courts</td>
-            </tr>
-            <tr>
-              <td><span class="zone-tag">Z7</span> Neuromusculaire</td>
-              <td>&gt; 0 W</td>
-              <td>Démarrages explosifs</td>
-            </tr>
-          </tbody>
+          <tbody id="zone-table"></tbody>
         </table>
       </div>
       <div class="plan" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
@@ -565,13 +569,76 @@
     };
 
     const zoneDefs = [
-      { label: 'Z1', name: 'Endurance active', min: 0, max: 0.55, description: 'Récupération facile' },
-      { label: 'Z2', name: 'Endurance', min: 0.56, max: 0.75, description: 'Sorties longues' },
-      { label: 'Z3', name: 'Tempo', min: 0.76, max: 0.90, description: 'Souffle régulier' },
-      { label: 'Z4', name: 'Seuil', min: 0.91, max: 1.05, description: 'Allure chrono' },
-      { label: 'Z5', name: 'VO2max', min: 1.06, max: 1.20, description: 'Efforts intenses' },
-      { label: 'Z6', name: 'Anaérobie', min: 1.21, max: 1.50, description: 'Sprints courts' },
-      { label: 'Z7', name: 'Neuromusculaire', min: 1.51, max: Infinity, description: 'Démarrages explosifs' }
+      {
+        label: 'Z1',
+        name: 'Endurance active',
+        min: 0,
+        max: 0.55,
+        description: 'Récupération facile',
+        rpe: 'RPE 1-2/10 – Très facile, conversation aisée',
+        couleur: '#9CCC65',
+        dureeConseillee: '45 à 120 min et plus'
+      },
+      {
+        label: 'Z2',
+        name: 'Endurance',
+        min: 0.56,
+        max: 0.75,
+        description: 'Sorties longues',
+        rpe: 'RPE 2-3/10 – Stable, respiration contrôlée',
+        couleur: '#66BB6A',
+        dureeConseillee: '60 à 180 min'
+      },
+      {
+        label: 'Z3',
+        name: 'Tempo',
+        min: 0.76,
+        max: 0.90,
+        description: 'Souffle régulier',
+        rpe: 'RPE 3-4/10 – Soutenu mais confortable',
+        couleur: '#FFCA28',
+        dureeConseillee: '20 à 60 min'
+      },
+      {
+        label: 'Z4',
+        name: 'Seuil',
+        min: 0.91,
+        max: 1.05,
+        description: 'Allure chrono',
+        rpe: 'RPE 5-6/10 – Dur mais contrôlé',
+        couleur: '#FFA726',
+        dureeConseillee: '10 à 30 min par blocs'
+      },
+      {
+        label: 'Z5',
+        name: 'VO2max',
+        min: 1.06,
+        max: 1.20,
+        description: 'Efforts intenses',
+        rpe: 'RPE 7-8/10 – Respiration haletante',
+        couleur: '#FB8C00',
+        dureeConseillee: '3 à 8 min par répétition'
+      },
+      {
+        label: 'Z6',
+        name: 'Anaérobie',
+        min: 1.21,
+        max: 1.50,
+        description: 'Sprints courts',
+        rpe: 'RPE 9/10 – Explosion maximale',
+        couleur: '#F4511E',
+        dureeConseillee: '30 s à 3 min par répétition'
+      },
+      {
+        label: 'Z7',
+        name: 'Neuromusculaire',
+        min: 1.51,
+        max: Infinity,
+        description: 'Démarrages explosifs',
+        rpe: 'RPE 10/10 – Effort total',
+        couleur: '#E53935',
+        dureeConseillee: 'Jusqu’à 30 s'
+      }
     ];
 
     modeRadios.forEach(radio => {
@@ -617,17 +684,38 @@
 
     function updateZones(ftp) {
       zoneTable.innerHTML = '';
+      const intensityMax = 1.6;
       zoneDefs.forEach(zone => {
         const tr = document.createElement('tr');
         const minWatts = zone.min === 0 ? 0 : ftp * zone.min;
         const maxWatts = zone.max === Infinity ? Infinity : ftp * zone.max;
+        const cappedMin = Math.min(zone.min, intensityMax);
+        const cappedMax = zone.max === Infinity ? intensityMax : Math.min(zone.max, intensityMax);
+        const fillStart = Math.min((cappedMin / intensityMax) * 100, 100);
+        const rawWidth = ((cappedMax - cappedMin) / intensityMax) * 100;
+        const minVisibleWidth = cappedMax > cappedMin ? Math.max(rawWidth, 6) : 6;
+        const availableWidth = 100 - fillStart;
+        const fillWidth = Math.max(Math.min(minVisibleWidth, availableWidth), 0);
+        const zoneClass = `zone-bar zone-bar--${zone.label.toLowerCase()}`;
+        const fillStyles = `--fill-start:${fillStart}%;--fill-width:${fillWidth}%;--zone-color:${zone.couleur};`;
         tr.innerHTML = `
-          <td><span class="zone-tag">${zone.label}</span> ${zone.name}</td>
-          <td>${formatRange(minWatts, maxWatts)}</td>
-          <td>${zone.description}</td>`;
+          <td><span class="zone-tag" style="--zone-color:${zone.couleur};">${zone.label}</span> ${zone.name}</td>
+          <td>
+            <span class="zone-range">${formatRange(minWatts, maxWatts)}</span>
+            <div class="${zoneClass}" aria-hidden="true">
+              <span class="zone-bar__fill" style="${fillStyles}"></span>
+            </div>
+          </td>
+          <td>${zone.rpe}</td>
+          <td>
+            <strong>${zone.description}</strong><br>
+            <span class="zone-duration">${zone.dureeConseillee}</span>
+          </td>`;
         zoneTable.appendChild(tr);
       });
     }
+
+    updateZones(0);
 
     ftpForm.addEventListener('submit', event => {
       event.preventDefault();
