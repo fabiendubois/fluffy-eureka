@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculateur FTP cyclisme (W &amp; W/kg) – Test 20’ &amp; zones d’entraînement</title>
+  <meta name="description" content="Calcule ta FTP à partir d’un test 20 minutes, d’un test ramp ou d’une estimation. Obtiens tes zones Z1–Z7 et un plan d’entraînement adapté.">
+  <meta property="og:title" content="Calculateur FTP cyclisme gratuit (W &amp; W/kg)">
+  <meta property="og:description" content="Simulateur FTP cycliste : tests 20 minutes, ramp, estimation par niveau. Zones d’entraînement et plan 3 séances inclus.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/ftp-cyclisme">
+  <meta property="og:image" content="https://example.com/assets/ftp-cyclisme.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculateur FTP cyclisme (W &amp; W/kg)">
+  <meta name="twitter:description" content="Calcule ta FTP, tes zones Z1-Z7 et ton plan d’entraînement personnalisé.">
+  <meta name="twitter:image" content="https://example.com/assets/ftp-cyclisme.jpg">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+      --accent: #1E88E5;
+      --bg: #ffffff;
+      --text: #12263A;
+      --muted: #6b7a90;
+      --shadow: 0 20px 40px rgba(18, 38, 58, 0.08);
+      --radius: 18px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 16px 64px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 640px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      margin: 0 0 8px;
+      color: var(--accent);
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    p.lead {
+      margin-top: 16px;
+      color: var(--text);
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    fieldset {
+      border: 2px solid rgba(30, 136, 229, 0.15);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 0;
+    }
+
+    legend {
+      font-weight: 600;
+      color: var(--accent);
+      padding: 0 8px;
+    }
+
+    .mode-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      color: var(--text);
+      gap: 4px;
+    }
+
+    .radio-group label {
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .input-row {
+      display: grid;
+      gap: 12px;
+    }
+
+    input, select, button {
+      border-radius: 12px;
+      border: 1px solid rgba(18, 38, 58, 0.15);
+      padding: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus, button:focus {
+      outline: 3px solid rgba(30, 136, 229, 0.3);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+
+    button[type="submit"] {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(30, 136, 229, 0.25);
+    }
+
+    button[type="submit"]:hover {
+      filter: brightness(1.05);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(1px);
+    }
+
+    .method-panel {
+      display: none;
+      gap: 12px;
+    }
+
+    .method-panel.active {
+      display: grid;
+    }
+
+    #results {
+      border-radius: var(--radius);
+      border: 1px solid rgba(30, 136, 229, 0.2);
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(30, 136, 229, 0.12), rgba(30, 136, 229, 0.03));
+      display: grid;
+      gap: 16px;
+    }
+
+    #results h2 {
+      margin: 0;
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
+      text-align: center;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(30, 136, 229, 0.1);
+      color: var(--accent);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(30, 136, 229, 0.06);
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fff;
+    }
+
+    .zone-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(30, 136, 229, 0.15);
+      color: var(--accent);
+    }
+
+    .plan {
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
+      padding: 20px;
+    }
+
+    .plan h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .plan ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    #motivation {
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    section {
+      margin-top: 32px;
+    }
+
+    #affiliation ul {
+      padding-left: 20px;
+    }
+
+    #affiliation a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    #affiliation a:hover {
+      text-decoration: underline;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(18, 38, 58, 0.1);
+      padding: 12px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+
+      main {
+        padding: 24px 18px 32px;
+      }
+
+      table, thead {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Comment calculer ma FTP ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tu peux réaliser un test de 20 minutes, un test ramp progressif ou utiliser une estimation selon ton niveau. Ce calculateur applique automatiquement le bon coefficient pour donner ta FTP en watts et en watts par kilo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelle est la bonne FTP pour un cycliste amateur ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "La FTP d\u2019un amateur varie souvent entre 2 et 4 W/kg. L\u2019objectif est d\u2019am\u00e9liorer progressivement ce chiffre avec des s\u00e9ances r\u00e9guli\u00e8res."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelle diff\u00e9rence entre FTP et W/kg ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "La FTP repr\u00e9sente la puissance soutenable pendant une heure en watts. Les W/kg prennent aussi en compte ton poids : c\u2019est un bon indicateur pour comparer des cyclistes de morphologies diff\u00e9rentes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quand refaire un test FTP ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Refais un test FTP toutes les 6 \u00e0 8 semaines pour suivre tes progr\u00e8s et ajuster tes zones d\u2019entraînement."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Calculateur FTP cyclisme gratuit (W &amp; W/kg)</h1>
+      <p>Test 20’, test ramp, ou estimation simplifiée</p>
+      <p class="lead">Renseigne ta puissance ou ton niveau. Le simulateur calcule ta FTP, tes zones d’entraînement Coggan et te propose trois séances par semaine pour progresser sans te blesser.</p>
+    </header>
+
+    <form id="ftp-form" aria-describedby="form-helper">
+      <p id="form-helper">Choisis une méthode puis indique ta puissance ou ton poids. Tous les champs sont obligatoires pour obtenir un résultat précis.</p>
+      <fieldset>
+        <legend>Méthode de calcul</legend>
+        <div class="mode-options radio-group">
+          <label><input type="radio" name="mode" value="20min" checked> Test 20 minutes</label>
+          <label><input type="radio" name="mode" value="ramp"> Test ramp</label>
+          <label><input type="radio" name="mode" value="niveau"> Estimation par niveau</label>
+        </div>
+        <div class="method-panel active" data-panel="20min">
+          <div class="input-row">
+            <label for="power20">Puissance moyenne sur 20 min (W)
+              <input id="power20" name="power20" type="number" min="50" max="700" inputmode="decimal" required>
+            </label>
+            <label for="weight20">Poids actuel (kg)
+              <input id="weight20" name="weight20" type="number" min="30" max="150" inputmode="decimal" required>
+            </label>
+          </div>
+        </div>
+        <div class="method-panel" data-panel="ramp">
+          <div class="input-row">
+            <label for="powerramp">Puissance max tenue 1 min (W)
+              <input id="powerramp" name="powerramp" type="number" min="50" max="800" inputmode="decimal">
+            </label>
+            <label for="weightramp">Poids actuel (kg)
+              <input id="weightramp" name="weightramp" type="number" min="30" max="150" inputmode="decimal">
+            </label>
+          </div>
+        </div>
+        <div class="method-panel" data-panel="niveau">
+          <div class="input-row">
+            <label for="niveau">Ton niveau ressenti
+              <select id="niveau" name="niveau">
+                <option value="debutant">Débutant</option>
+                <option value="intermediaire">Intermédiaire</option>
+                <option value="avance">Avancé</option>
+              </select>
+            </label>
+            <label for="weightniveau">Poids actuel (kg)
+              <input id="weightniveau" name="weightniveau" type="number" min="30" max="150" inputmode="decimal">
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <button type="submit">Calculer ma FTP</button>
+    </form>
+
+    <section id="results" aria-live="polite">
+      <h2>Résultats personnalisés</h2>
+      <div class="stats">
+        <div class="stat-card" aria-label="FTP en watts">
+          <span>FTP</span>
+          <strong id="ftp-watts">0 W</strong>
+        </div>
+        <div class="stat-card" aria-label="FTP en watts par kilo">
+          <span>W/kg</span>
+          <strong id="ftp-wkg">0.00 W/kg</strong>
+        </div>
+      </div>
+      <div>
+        <h3>Zones d’entraînement (table Coggan)</h3>
+        <table aria-describedby="zone-helper">
+          <caption id="zone-helper">Plages de puissance basées sur ta FTP actuelle.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Zone</th>
+              <th scope="col">Plage de puissance</th>
+              <th scope="col">Objectif</th>
+            </tr>
+          </thead>
+          <tbody id="zone-table">
+            <tr>
+              <td><span class="zone-tag">Z1</span> Endurance active</td>
+              <td>0 – 0 W</td>
+              <td>Récupération facile</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z2</span> Endurance</td>
+              <td>0 – 0 W</td>
+              <td>Sorties longues</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z3</span> Tempo</td>
+              <td>0 – 0 W</td>
+              <td>Souffle régulier</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z4</span> Seuil</td>
+              <td>0 – 0 W</td>
+              <td>Allure chrono</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z5</span> VO2max</td>
+              <td>0 – 0 W</td>
+              <td>Efforts intenses</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z6</span> Anaérobie</td>
+              <td>0 – 0 W</td>
+              <td>Sprints courts</td>
+            </tr>
+            <tr>
+              <td><span class="zone-tag">Z7</span> Neuromusculaire</td>
+              <td>&gt; 0 W</td>
+              <td>Démarrages explosifs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="plan" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
+        <h3>Plan d’entraînement (semaine type)</h3>
+        <ul id="plan-list">
+          <li>Choisis une méthode puis calcule ta FTP pour recevoir un plan ciblé.</li>
+        </ul>
+      </div>
+      <p id="motivation">Tu es prêt à progresser 🚴‍♂️ !</p>
+    </section>
+
+    <section aria-labelledby="guide-tests">
+      <h2 id="guide-tests">Comprendre tes tests FTP</h2>
+      <p>Le test de 20 minutes est rapide et fiable. Tu pédales à fond pendant vingt minutes puis le calculateur retire 5&nbsp;% pour estimer ton effort sur une heure. Le test ramp augmente la puissance chaque minute jusqu’à l’échec : nous retenons 75&nbsp;% de la dernière minute complète.</p>
+      <p>Pas encore équipé ? Choisis l’estimation par niveau. C’est pratique pour planifier tes séances ou pour suivre une progression simple sans stress.</p>
+    </section>
+
+    <section aria-labelledby="conseils">
+      <h2 id="conseils">Conseils pour progresser en sécurité</h2>
+      <ul>
+        <li>Échauffe-toi au moins 15 minutes avant chaque test pour protéger tes muscles.</li>
+        <li>Hydrate-toi régulièrement, même en intérieur sur home-trainer.</li>
+        <li>Dors suffisamment : la récupération est la clé pour augmenter ta FTP.</li>
+        <li>Ajoute une sortie facile en Z1-Z2 pour consolider ton endurance de base.</li>
+      </ul>
+    </section>
+
+    <!-- AFFILIATE_BLOCK -->
+    <section id="affiliation" aria-labelledby="affiliation-title">
+      <h2 id="affiliation-title">Capteurs &amp; home-trainers recommandés</h2>
+      <ul>
+        <li>Capteur de puissance – <a href="#">Voir le prix</a></li>
+        <li>Home-trainer connecté – <a href="#">Voir le prix</a></li>
+        <li>Montre GPS vélo – <a href="#">Voir le prix</a></li>
+      </ul>
+      <p><em>Liens affiliés : je peux percevoir une petite commission, sans surcoût pour toi.</em></p>
+    </section>
+    <!-- END AFFILIATE_BLOCK -->
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">FAQ FTP cyclisme</h2>
+      <div class="faq-item">
+        <h3>Comment calculer ma FTP ?</h3>
+        <p>Réalise un test 20 minutes à fond, un test ramp ou utilise l’estimation par niveau. Ensuite, clique sur « Calculer ma FTP » pour obtenir ton résultat.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Quelle est la bonne FTP pour un cycliste amateur ?</h3>
+        <p>Un cycliste amateur se situe souvent entre 2 et 4&nbsp;W/kg. Avec un suivi régulier, tu peux viser une progression de 5&nbsp;% tous les deux mois.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Quelle différence entre FTP et W/kg ?</h3>
+        <p>La FTP exprime ta puissance pure en watts. Les watts par kilo comparent ta puissance à ton poids et donnent une vision plus juste de tes performances en côte.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Quand refaire un test FTP ?</h3>
+        <p>Teste-toi toutes les 6 à 8 semaines, ou après un bloc d’entraînement structuré, pour valider les progrès et adapter les intensités.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>Mentions légales – Texte indicatif</p>
+      <p><a href="#">Politique de confidentialité</a></p>
+      <p>Disclaimer : Cet outil est informatif. Consulte ton entraîneur avant tout changement de programme.</p>
+    </footer>
+  </main>
+
+  <script>
+    const modeRadios = document.querySelectorAll('input[name="mode"]');
+    const panels = document.querySelectorAll('.method-panel');
+    const ftpForm = document.getElementById('ftp-form');
+    const ftpWatts = document.getElementById('ftp-watts');
+    const ftpWkg = document.getElementById('ftp-wkg');
+    const zoneTable = document.getElementById('zone-table');
+    const planList = document.getElementById('plan-list');
+    const motivation = document.getElementById('motivation');
+
+    const workouts = {
+      debutant: [
+        'Séance 1 : 45 min en Z2 + 3 accélérations de 1 min en Z4.',
+        'Séance 2 : 30 min échauffement, 3 × 5 min en Z3 avec 3 min Z1 entre, retour au calme.',
+        'Séance 3 : Sortie longue 90 min en Z2 avec 10 min finales en Z3.'
+      ],
+      intermediaire: [
+        'Séance 1 : 20 min Z2 puis 4 × 4 min en Z4, récupération 3 min Z1.',
+        'Séance 2 : 75 min endurance, intégrer 2 blocs de 12 min en Z3.',
+        'Séance 3 : 6 × 3 min en Z5 avec 3 min faciles, finir par 15 min Z2.'
+      ],
+      avance: [
+        'Séance 1 : 3 × 10 min en Z4-Z5, récupération 5 min Z2 entre les blocs.',
+        'Séance 2 : 2 h endurance avec 5 sprints de 15 s en Z6, récupération complète.',
+        'Séance 3 : 5 × 6 min en Z5, récupération 4 min, finir par 20 min Z3.'
+      ]
+    };
+
+    const zoneDefs = [
+      { label: 'Z1', name: 'Endurance active', min: 0, max: 0.55, description: 'Récupération facile' },
+      { label: 'Z2', name: 'Endurance', min: 0.56, max: 0.75, description: 'Sorties longues' },
+      { label: 'Z3', name: 'Tempo', min: 0.76, max: 0.90, description: 'Souffle régulier' },
+      { label: 'Z4', name: 'Seuil', min: 0.91, max: 1.05, description: 'Allure chrono' },
+      { label: 'Z5', name: 'VO2max', min: 1.06, max: 1.20, description: 'Efforts intenses' },
+      { label: 'Z6', name: 'Anaérobie', min: 1.21, max: 1.50, description: 'Sprints courts' },
+      { label: 'Z7', name: 'Neuromusculaire', min: 1.51, max: Infinity, description: 'Démarrages explosifs' }
+    ];
+
+    modeRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        panels.forEach(panel => {
+          const isActive = panel.dataset.panel === radio.value;
+          panel.classList.toggle('active', isActive);
+          const inputs = panel.querySelectorAll('input');
+          inputs.forEach(input => input.required = isActive);
+          const selects = panel.querySelectorAll('select');
+          selects.forEach(select => select.required = isActive);
+        });
+      });
+    });
+
+    function formatRange(min, max) {
+      if (max === Infinity) {
+        return `>${Math.round(min)} W`;
+      }
+      return `${Math.round(min)} – ${Math.round(max)} W`;
+    }
+
+    function determineLevel(mode, ftp, weight) {
+      if (mode === 'niveau') {
+        const levelSelect = document.getElementById('niveau');
+        return levelSelect.value;
+      }
+      const ratio = ftp && weight ? ftp / weight : 0;
+      if (ratio < 2.6) return 'debutant';
+      if (ratio < 3.5) return 'intermediaire';
+      return 'avance';
+    }
+
+    function renderPlan(levelKey) {
+      const items = workouts[levelKey] || workouts.debutant;
+      planList.innerHTML = '';
+      items.forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        planList.appendChild(li);
+      });
+    }
+
+    function updateZones(ftp) {
+      zoneTable.innerHTML = '';
+      zoneDefs.forEach(zone => {
+        const tr = document.createElement('tr');
+        const minWatts = zone.min === 0 ? 0 : ftp * zone.min;
+        const maxWatts = zone.max === Infinity ? Infinity : ftp * zone.max;
+        tr.innerHTML = `
+          <td><span class="zone-tag">${zone.label}</span> ${zone.name}</td>
+          <td>${formatRange(minWatts, maxWatts)}</td>
+          <td>${zone.description}</td>`;
+        zoneTable.appendChild(tr);
+      });
+    }
+
+    ftpForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const mode = [...modeRadios].find(r => r.checked)?.value;
+      let ftp = 0;
+      let weight = 0;
+
+      if (mode === '20min') {
+        const power20 = parseFloat(document.getElementById('power20').value);
+        weight = parseFloat(document.getElementById('weight20').value);
+        if (!power20 || !weight) {
+          alert('Merci de renseigner une puissance et un poids valides.');
+          return;
+        }
+        ftp = power20 * 0.95;
+      } else if (mode === 'ramp') {
+        const powerRamp = parseFloat(document.getElementById('powerramp').value);
+        weight = parseFloat(document.getElementById('weightramp').value);
+        if (!powerRamp || !weight) {
+          alert('Merci de renseigner une puissance et un poids valides.');
+          return;
+        }
+        ftp = powerRamp * 0.75;
+      } else if (mode === 'niveau') {
+        const level = document.getElementById('niveau').value;
+        weight = parseFloat(document.getElementById('weightniveau').value);
+        if (!weight) {
+          alert('Merci de renseigner ton poids pour l’estimation.');
+          return;
+        }
+        if (level === 'debutant') ftp = weight * 2.3;
+        if (level === 'intermediaire') ftp = weight * 3.1;
+        if (level === 'avance') ftp = weight * 3.8;
+      }
+
+      const wkg = weight ? ftp / weight : 0;
+      ftpWatts.textContent = `${Math.round(ftp)} W`;
+      ftpWkg.textContent = `${wkg.toFixed(2)} W/kg`;
+
+      updateZones(ftp);
+      const levelKey = determineLevel(mode, ftp, weight);
+      renderPlan(levelKey);
+
+      motivation.textContent = 'Tu es prêt à progresser 🚴‍♂️ ! Continue sur cette lancée !';
+    });
+  </script>
+</body>
+</html>
