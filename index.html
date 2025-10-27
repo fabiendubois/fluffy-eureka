@@ -109,7 +109,13 @@
     .container {
       max-width: 720px;
       margin: 0 auto;
-      padding: var(--space-6);
+      padding: var(--space-4);
+    }
+
+    @media (min-width: 600px) {
+      .container {
+        padding: var(--space-6);
+      }
     }
 
     @media (min-width: 768px) {
@@ -155,8 +161,14 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-sm);
-      padding: var(--space-6);
+      padding: var(--space-5);
       transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    @media (min-width: 600px) {
+      .card {
+        padding: var(--space-6);
+      }
     }
 
     .card:hover {
@@ -621,12 +633,29 @@
       --zone-color: var(--danger);
     }
 
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-md);
+    }
+
+    .table-wrapper .table {
+      min-width: 560px;
+    }
+
     .plan {
       border-radius: var(--radius-lg);
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: var(--space-5);
+      padding: var(--space-4);
       box-shadow: var(--shadow-sm);
+    }
+
+    @media (min-width: 600px) {
+      .plan {
+        padding: var(--space-5);
+      }
     }
 
     #motivation {
@@ -827,18 +856,20 @@
       </div>
       <div class="stack-4">
         <h3>Zones d’entraînement (table Coggan)</h3>
-        <table class="table" aria-describedby="zone-helper">
-          <caption id="zone-helper" class="sr-only">Plages de puissance basées sur ta FTP actuelle. La barre colorée illustre la zone de travail, la colonne RPE décrit l’effort perçu et la dernière colonne précise l’objectif et la durée conseillée.</caption>
-          <thead>
-            <tr>
-              <th scope="col">Zone</th>
-              <th scope="col">Plage de puissance</th>
-              <th scope="col">RPE / sensations</th>
-              <th scope="col">Objectif &amp; durée</th>
-            </tr>
-          </thead>
-          <tbody id="zone-table"></tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="table" aria-describedby="zone-helper">
+            <caption id="zone-helper" class="sr-only">Plages de puissance basées sur ta FTP actuelle. La barre colorée illustre la zone de travail, la colonne RPE décrit l’effort perçu et la dernière colonne précise l’objectif et la durée conseillée.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Zone</th>
+                <th scope="col">Plage de puissance</th>
+                <th scope="col">RPE / sensations</th>
+                <th scope="col">Objectif &amp; durée</th>
+              </tr>
+            </thead>
+            <tbody id="zone-table"></tbody>
+          </table>
+        </div>
       </div>
       <div class="plan stack-4" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
         <h3>Plan d’entraînement (semaine type)</h3>
