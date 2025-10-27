@@ -17,306 +17,637 @@
   <style>
     :root {
       color-scheme: light;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
-      font-size: 16px;
-      --accent: #1E88E5;
-      --bg: #ffffff;
-      --text: #12263A;
-      --muted: #6b7a90;
-      --shadow: 0 20px 40px rgba(18, 38, 58, 0.08);
-      --radius: 18px;
+      --bg: #F7F7F8;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --accent: #FF7A1A;
+      --accent-50: #FFF3E9;
+      --accent-solid: #CC5500;
+      --accent-solid-700: #C24E00;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --fs-xs: 12px;
+      --fs-sm: 14px;
+      --fs-base: 16px;
+      --fs-md: 18px;
+      --fs-lg: 22px;
+      --fs-xl: 30px;
+      --fs-2xl: 36px;
+      --fw-normal: 400;
+      --fw-medium: 500;
+      --fw-semibold: 600;
+      --fw-bold: 700;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-pill: 999px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, .12);
+      --z-base: 1;
+      --z-overlay: 10;
+      --z-modal: 100;
     }
 
-    *, *::before, *::after {
+    html {
       box-sizing: border-box;
     }
 
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
     body {
-      margin: 0;
       background: var(--bg);
       color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px 16px 64px;
+      font: var(--fw-normal) var(--fs-base)/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      margin: 0;
     }
 
-    main {
-      width: 100%;
-      max-width: 640px;
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 32px 24px 40px;
+    img, svg, video {
+      max-width: 100%;
+      height: auto;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 24px;
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color .18s ease;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent-solid);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px var(--accent-50);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: var(--space-8);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 960px;
+      }
+    }
+
+    .stack-2 > * + * {
+      margin-top: var(--space-2);
+    }
+
+    .stack-4 > * + * {
+      margin-top: var(--space-4);
+    }
+
+    .stack-6 > * + * {
+      margin-top: var(--space-6);
+    }
+
+    .stack-8 > * + * {
+      margin-top: var(--space-8);
+    }
+
+    .grid-2 {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-6);
+      }
+    }
+
+    .section {
+      margin-block: var(--space-8);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-6);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-title {
+      font-size: var(--fs-lg);
+      font-weight: var(--fw-semibold);
+      margin: 0 0 var(--space-3);
+    }
+
+    .card-subtle {
+      color: var(--muted);
+      font-size: var(--fs-base);
+    }
+
+    @media (min-width: 768px) {
+      .card-subtle {
+        font-size: var(--fs-sm);
+      }
     }
 
     h1 {
-      font-size: clamp(1.8rem, 5vw, 2.4rem);
-      margin: 0 0 8px;
-      color: var(--accent);
+      font-size: var(--fs-2xl);
+      font-weight: var(--fw-semibold);
+      margin: 0 0 var(--space-4);
     }
 
-    header p {
-      margin: 0;
-      color: var(--muted);
-      font-weight: 500;
+    h2 {
+      font-size: var(--fs-lg);
+      font-weight: var(--fw-semibold);
+      margin: 0 0 var(--space-3);
     }
 
-    p.lead {
-      margin-top: 16px;
-      color: var(--text);
+    h3 {
+      font-size: var(--fs-md);
+      font-weight: var(--fw-medium);
+      margin: 0 0 var(--space-2);
     }
 
-    form {
-      display: grid;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    fieldset {
-      border: 2px solid rgba(30, 136, 229, 0.15);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin: 0;
-    }
-
-    legend {
-      font-weight: 600;
-      color: var(--accent);
-      padding: 0 8px;
-    }
-
-    .mode-options {
-      display: flex;
-      flex-direction: column;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       gap: 8px;
-      margin-bottom: 8px;
+      min-height: 44px;
+      padding: 12px 18px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      background: var(--accent-solid);
+      color: #fff;
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      transition: background .18s ease, box-shadow .18s ease, transform .18s ease;
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      font-weight: 600;
+    .btn:hover {
+      background: var(--accent-solid-700);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: color-mix(in srgb, var(--border) 60%, var(--surface));
       color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--border) 75%, var(--surface));
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost:hover {
+      background: var(--accent-50);
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-block: var(--space-4);
+    }
+
+    .label {
+      font-size: var(--fs-base);
+      color: var(--muted);
+    }
+
+    @media (min-width: 768px) {
+      .label {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      height: 44px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: border-color .18s ease, box-shadow .18s ease;
+      font: inherit;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--accent-solid);
+      box-shadow: 0 0 0 3px var(--accent-50);
+      outline: none;
+    }
+
+    .input::placeholder {
+      color: color-mix(in srgb, var(--muted) 60%, var(--surface));
+    }
+
+    .help {
+      font-size: var(--fs-base);
+      color: var(--muted);
+    }
+
+    @media (min-width: 768px) {
+      .help {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: color-mix(in srgb, var(--border) 55%, var(--surface));
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+    }
+
+    .tab {
+      padding: 10px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .tab.is-active {
+      background: var(--accent-solid);
+      color: #fff;
+    }
+
+    .tab:focus-visible {
+      outline: 2px solid var(--accent-solid);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .table thead th {
+      text-align: left;
+      background: color-mix(in srgb, var(--border) 55%, var(--surface));
+      font-size: var(--fs-base);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    @media (min-width: 768px) {
+      .table thead th {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .table tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table tbody tr:nth-child(even) {
+      background: color-mix(in srgb, var(--border) 35%, var(--surface));
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-50);
+      color: var(--accent);
+      font-weight: var(--fw-semibold);
+      font-size: var(--fs-base);
+    }
+
+    @media (min-width: 768px) {
+      .badge {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .metric {
+      display: grid;
       gap: 4px;
     }
 
-    .radio-group label {
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
+    .metric .value {
+      font-size: 28px;
+      font-weight: var(--fw-bold);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: var(--fs-base);
+    }
+
+    @media (min-width: 768px) {
+      .metric .label {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .callout {
+      background: var(--accent-50);
+      border-left: 4px solid var(--accent);
+      padding: 14px;
+      border-radius: var(--radius-md);
+    }
+
+    .callout .title {
+      font-weight: var(--fw-semibold);
+      margin: 0 0 4px;
+    }
+
+    .callout .text {
+      color: var(--muted);
+      font-size: var(--fs-base);
+    }
+
+    @media (min-width: 768px) {
+      .callout .text {
+        font-size: var(--fs-sm);
+      }
+    }
+
+    .link-muted {
+      color: var(--muted);
+    }
+
+    .link-muted:hover {
       color: var(--text);
-      cursor: pointer;
     }
 
-    .input-row {
+    ul.clean {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul.check > li {
+      margin: 6px 0;
+      padding-left: 22px;
+      position: relative;
+    }
+
+    ul.check > li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .pill {
+      border-radius: var(--radius-pill);
+    }
+
+    .shadow-sm {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .shadow-md {
+      box-shadow: var(--shadow-md);
+    }
+
+    .shadow-lg {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mt-2 {
+      margin-top: var(--space-2);
+    }
+
+    .mt-4 {
+      margin-top: var(--space-4);
+    }
+
+    .mt-6 {
+      margin-top: var(--space-6);
+    }
+
+    .mt-8 {
+      margin-top: var(--space-8);
+    }
+
+    .mb-2 {
+      margin-bottom: var(--space-2);
+    }
+
+    .mb-4 {
+      margin-bottom: var(--space-4);
+    }
+
+    .mb-6 {
+      margin-bottom: var(--space-6);
+    }
+
+    .mb-8 {
+      margin-bottom: var(--space-8);
+    }
+
+    .mode-options {
       display: grid;
-      gap: 12px;
+      gap: var(--space-3);
     }
 
-    input, select, button {
-      border-radius: 12px;
-      border: 1px solid rgba(18, 38, 58, 0.15);
-      padding: 12px;
-      font-size: 1rem;
-      font-family: inherit;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input:focus, select:focus, button:focus {
-      outline: 3px solid rgba(30, 136, 229, 0.3);
-      outline-offset: 2px;
-      border-color: var(--accent);
-    }
-
-    button[type="submit"] {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      font-weight: 700;
+    .radio-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
       cursor: pointer;
-      box-shadow: 0 12px 24px rgba(30, 136, 229, 0.25);
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
     }
 
-    button[type="submit"]:hover {
-      filter: brightness(1.05);
+    .radio-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
     }
 
-    button[type="submit"]:active {
-      transform: translateY(1px);
+    .radio-card input[type="radio"] {
+      accent-color: var(--accent);
+    }
+
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin: 0;
+      background: var(--surface);
+    }
+
+    legend {
+      font-size: var(--fs-base);
+      font-weight: var(--fw-semibold);
+      color: var(--accent);
+      padding: 0 var(--space-2);
+    }
+
+    @media (min-width: 768px) {
+      legend {
+        font-size: var(--fs-sm);
+      }
     }
 
     .method-panel {
       display: none;
-      gap: 12px;
     }
 
     .method-panel.active {
       display: grid;
+      gap: var(--space-4);
     }
 
     #results {
-      border-radius: var(--radius);
-      border: 1px solid rgba(30, 136, 229, 0.2);
-      padding: 24px;
-      background: linear-gradient(135deg, rgba(30, 136, 229, 0.12), rgba(30, 136, 229, 0.03));
       display: grid;
-      gap: 16px;
-    }
-
-    #history {
-      margin-top: 32px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(30, 136, 229, 0.18);
-      padding: 24px;
-      background: #fff;
-      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
-      display: grid;
-      gap: 12px;
-    }
-
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    #history h2 {
-      margin: 0;
-      color: var(--accent);
-    }
-
-    #history-empty {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    #history-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 8px;
-    }
-
-    #history-list li {
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(18, 38, 58, 0.12);
-      background: rgba(30, 136, 229, 0.08);
-      font-weight: 500;
-    }
-
-    #history-clear {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(30, 136, 229, 0.4);
-      padding: 8px 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    #history-clear:hover:not(:disabled) {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    #history-clear:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #results h2 {
-      margin: 0;
-      color: var(--accent);
-      font-size: 1.5rem;
+      gap: var(--space-6);
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
+      gap: var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .stat-card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
       text-align: center;
     }
 
-    .stat-card strong {
-      display: block;
-      font-size: 1.4rem;
+    .stat-card .value {
       color: var(--accent);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: rgba(30, 136, 229, 0.1);
-      color: var(--accent);
-    }
-
-    tbody tr:nth-child(odd) {
-      background: rgba(30, 136, 229, 0.06);
-    }
-
-    tbody tr:nth-child(even) {
-      background: #fff;
     }
 
     .zone-tag {
       display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: 1px solid var(--zone-color, var(--accent));
-      background: rgba(30, 136, 229, 0.08);
-      background: color-mix(in srgb, var(--zone-color, var(--accent)) 18%, transparent);
-      color: var(--zone-color, var(--accent));
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: var(--fs-base);
+      font-weight: var(--fw-semibold);
+      border: 1px solid var(--accent-solid);
+      background: var(--accent-50);
+      color: var(--accent-solid);
+    }
+
+    @media (min-width: 768px) {
+      .zone-tag {
+        font-size: var(--fs-sm);
+      }
     }
 
     .zone-range {
       display: block;
-      font-weight: 600;
+      font-weight: var(--fw-semibold);
     }
 
     .zone-duration {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: var(--fs-base);
+    }
+
+    @media (min-width: 768px) {
+      .zone-duration {
+        font-size: var(--fs-sm);
+      }
     }
 
     .zone-bar {
       position: relative;
       height: 10px;
-      border-radius: 999px;
-      background: rgba(18, 38, 58, 0.12);
-      margin-top: 8px;
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--border) 80%, var(--surface));
+      margin-top: var(--space-2);
       overflow: hidden;
     }
 
@@ -329,58 +660,86 @@
       background: var(--zone-color, var(--accent));
     }
 
-    .zone-bar--z1 { --zone-color: #9CCC65; }
-    .zone-bar--z2 { --zone-color: #66BB6A; }
-    .zone-bar--z3 { --zone-color: #FFCA28; }
-    .zone-bar--z4 { --zone-color: #FFA726; }
-    .zone-bar--z5 { --zone-color: #FB8C00; }
-    .zone-bar--z6 { --zone-color: #F4511E; }
-    .zone-bar--z7 { --zone-color: #E53935; }
+    .zone-bar--z1 {
+      --zone-color: color-mix(in srgb, var(--accent) 35%, var(--surface));
+    }
+
+    .zone-bar--z2 {
+      --zone-color: color-mix(in srgb, var(--accent) 50%, var(--surface));
+    }
+
+    .zone-bar--z3 {
+      --zone-color: color-mix(in srgb, var(--accent) 65%, var(--surface));
+    }
+
+    .zone-bar--z4 {
+      --zone-color: var(--accent);
+    }
+
+    .zone-bar--z5 {
+      --zone-color: var(--accent-solid);
+    }
+
+    .zone-bar--z6 {
+      --zone-color: color-mix(in srgb, var(--accent-solid-700) 80%, var(--text));
+    }
+
+    .zone-bar--z7 {
+      --zone-color: var(--danger);
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-md);
+    }
+
+    .table-wrapper .table {
+      min-width: 560px;
+    }
 
     .plan {
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 12px 30px rgba(18, 38, 58, 0.08);
-      padding: 20px;
-    }
-
-    .plan h3 {
-      margin-top: 0;
-      color: var(--accent);
-    }
-
-    .plan ul {
-      margin: 0;
-      padding-left: 20px;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
     }
 
     #motivation {
-      font-weight: 700;
-      color: var(--accent);
+      font-weight: var(--fw-semibold);
+      color: var(--accent-solid);
       text-align: center;
     }
 
-    section {
-      margin-top: 32px;
+    #history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: var(--space-3);
     }
 
-    #affiliation ul {
-      padding-left: 20px;
+    #history-list li {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--accent-50);
+      font-weight: var(--fw-medium);
     }
 
-    #affiliation a {
-      color: var(--accent);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    #affiliation a:hover {
-      text-decoration: underline;
+    .history-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
     }
 
     .faq-item {
-      border-bottom: 1px solid rgba(18, 38, 58, 0.1);
-      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      padding-block: var(--space-4);
     }
 
     .faq-item:last-child {
@@ -388,32 +747,38 @@
     }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.9rem;
+      margin-top: var(--space-10);
+      font-size: var(--fs-base);
       color: var(--muted);
       text-align: center;
+      padding-bottom: var(--space-8);
     }
 
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
+    @media (min-width: 768px) {
+      footer {
+        font-size: var(--fs-sm);
+      }
     }
 
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 16px 12px 48px;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F1115;
+        --surface: #151822;
+        --text: #F3F4F6;
+        --muted: #9CA3AF;
+        --border: #242736;
+        --accent: #FF7A1A;
+        --accent-50: #2A190E;
+        --accent-solid: #D45F00;
+        --accent-solid-700: #BF4A00;
       }
 
-      main {
-        padding: 24px 18px 32px;
+      .table thead th {
+        background: #1A1F2B;
       }
 
-      table, thead {
-        font-size: 0.9rem;
+      .table tbody tr:nth-child(even) {
+        background: #121521;
       }
     }
   </style>
@@ -435,15 +800,7 @@
         "name": "Quelle est la bonne FTP pour un cycliste amateur ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "La FTP d\u2019un amateur varie souvent entre 2 et 4 W/kg. L\u2019objectif est d\u2019am\u00e9liorer progressivement ce chiffre avec des s\u00e9ances r\u00e9guli\u00e8res."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Quelle diff\u00e9rence entre FTP et W/kg ?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "La FTP repr\u00e9sente la puissance soutenable pendant une heure en watts. Les W/kg prennent aussi en compte ton poids : c\u2019est un bon indicateur pour comparer des cyclistes de morphologies diff\u00e9rentes."
+          "text": "La FTP d’un amateur varie souvent entre 2 et 4 W/kg. L’objectif est d’améliorer progressivement ce chiffre avec des séances régulières."
         }
       },
       {
@@ -451,7 +808,7 @@
         "name": "Quand refaire un test FTP ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Refais un test FTP toutes les 6 \u00e0 8 semaines pour suivre tes progr\u00e8s et ajuster tes zones d\u2019entraînement."
+          "text": "Refais un test toutes les 6 à 8 semaines pour ajuster tes zones d’entraînement et valider tes progrès."
         }
       }
     ]
@@ -459,116 +816,119 @@
   </script>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>Calculateur FTP cyclisme gratuit (W &amp; W/kg)</h1>
-      <p>Test 20’, test ramp, ou estimation simplifiée</p>
-      <p class="lead">Renseigne ta puissance ou ton niveau. Le simulateur calcule ta FTP, tes zones d’entraînement Coggan et te propose trois séances par semaine pour progresser sans te blesser.</p>
+  <main class="container stack-8">
+    <header class="section center stack-4">
+      <span class="badge">Calculateur FTP cyclisme</span>
+      <h1>Calcule ta FTP en quelques minutes</h1>
+      <p class="card-subtle">Choisis ton test préféré (20 minutes, ramp ou estimation par niveau) pour connaître ta FTP en watts et en watts par kilo.</p>
+      <p>Obtiens tes zones Z1-Z7, une interprétation claire et un plan de 3 séances adapté à ton niveau.</p>
     </header>
 
-    <form id="ftp-form" aria-describedby="form-helper">
-      <p id="form-helper">Choisis une méthode puis indique ta puissance ou ton poids. Tous les champs sont obligatoires pour obtenir un résultat précis.</p>
-      <fieldset>
-        <legend>Méthode de calcul</legend>
-        <div class="mode-options radio-group">
-          <label><input type="radio" name="mode" value="20min" checked> Test 20 minutes</label>
-          <label><input type="radio" name="mode" value="ramp"> Test ramp</label>
-          <label><input type="radio" name="mode" value="niveau"> Estimation par niveau</label>
-        </div>
-        <div class="method-panel active" data-panel="20min">
-          <div class="input-row">
-            <label for="power20">Puissance moyenne sur 20 min (W)
-              <input id="power20" name="power20" type="number" min="50" max="700" inputmode="decimal" required>
+    <section class="section card stack-6" id="calculator">
+      <div class="stack-2">
+        <h2 class="card-title">Entre tes données</h2>
+        <p class="card-subtle">Renseigne les informations correspondant à ta méthode de test pour générer automatiquement ta FTP.</p>
+      </div>
+      <form id="ftp-form" class="stack-4" autocomplete="off">
+        <fieldset>
+          <legend>Méthode de calcul</legend>
+          <div class="mode-options">
+            <label class="radio-card">
+              <input type="radio" name="mode" value="20min" checked>
+              <span>Test 20 minutes</span>
             </label>
-            <label for="weight20">Poids actuel (kg)
-              <input id="weight20" name="weight20" type="number" min="30" max="150" inputmode="decimal" required>
+            <label class="radio-card">
+              <input type="radio" name="mode" value="ramp">
+              <span>Test ramp</span>
             </label>
-          </div>
-        </div>
-        <div class="method-panel" data-panel="ramp">
-          <div class="input-row">
-            <label for="powerramp">Puissance max tenue 1 min (W)
-              <input id="powerramp" name="powerramp" type="number" min="50" max="800" inputmode="decimal">
-            </label>
-            <label for="weightramp">Poids actuel (kg)
-              <input id="weightramp" name="weightramp" type="number" min="30" max="150" inputmode="decimal">
+            <label class="radio-card">
+              <input type="radio" name="mode" value="niveau">
+              <span>Estimation par niveau</span>
             </label>
           </div>
-        </div>
-        <div class="method-panel" data-panel="niveau">
-          <div class="input-row">
-            <label for="niveau">Ton niveau ressenti
-              <select id="niveau" name="niveau">
-                <option value="debutant">Débutant</option>
-                <option value="intermediaire">Intermédiaire</option>
-                <option value="avance">Avancé</option>
-              </select>
-            </label>
-            <label for="weightniveau">Poids actuel (kg)
-              <input id="weightniveau" name="weightniveau" type="number" min="30" max="150" inputmode="decimal">
-            </label>
-          </div>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Personnalisation du plan</legend>
-        <div class="input-row">
-          <label for="seances">Disponibilité hebdomadaire
-            <select id="seances" name="seances">
-              <option value="2">2 séances</option>
-              <option value="3" selected>3 séances</option>
-              <option value="4">4 séances</option>
-            </select>
-          </label>
-          <label for="objectif">Objectif principal
-            <select id="objectif" name="objectif">
-              <option value="endurance" selected>Endurance</option>
-              <option value="intensite">Intensité</option>
-              <option value="grimpe">Grimpe</option>
-            </select>
-          </label>
-          <label for="duree">Temps par séance
-            <select id="duree" name="duree">
-              <option value="45">45 min</option>
-              <option value="60" selected>60 min</option>
-              <option value="90">90 min</option>
-            </select>
-          </label>
-        </div>
-      </fieldset>
-      <button type="submit">Calculer ma FTP</button>
-    </form>
 
-    <section id="results" aria-live="polite">
-      <h2>Résultats personnalisés</h2>
+          <div class="method-panel active" data-panel="20min">
+            <div class="grid-2">
+              <label class="field">
+                <span class="label">Puissance moyenne 20'</span>
+                <input class="input" type="number" id="power20" min="50" max="600" placeholder="Ex. 280" required>
+              </label>
+              <label class="field">
+                <span class="label">Poids (kg)</span>
+                <input class="input" type="number" id="weight20" min="30" max="120" placeholder="Ex. 72" required>
+              </label>
+            </div>
+          </div>
+
+          <div class="method-panel" data-panel="ramp">
+            <div class="grid-2">
+              <label class="field">
+                <span class="label">Puissance max atteinte (W)</span>
+                <input class="input" type="number" id="powerramp" min="50" max="600" placeholder="Ex. 360">
+              </label>
+              <label class="field">
+                <span class="label">Poids (kg)</span>
+                <input class="input" type="number" id="weightramp" min="30" max="120" placeholder="Ex. 70">
+              </label>
+            </div>
+          </div>
+
+          <div class="method-panel" data-panel="niveau">
+            <div class="grid-2">
+              <label class="field">
+                <span class="label">Ton niveau actuel</span>
+                <select class="select" id="niveau">
+                  <option value="debutant">Débutant (FTP estimée 2.3 W/kg)</option>
+                  <option value="intermediaire">Intermédiaire (FTP estimée 3.1 W/kg)</option>
+                  <option value="avance">Avancé (FTP estimée 3.8 W/kg)</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="label">Poids (kg)</span>
+                <input class="input" type="number" id="weightniveau" min="30" max="120" placeholder="Ex. 68">
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn">Calculer ma FTP</button>
+      </form>
+    </section>
+
+    <section id="results" aria-live="polite" class="section card stack-6">
+      <div class="stack-2">
+        <h2 class="card-title">Résultats</h2>
+        <p class="card-subtle">Ta FTP calculée à partir des données fournies.</p>
+      </div>
       <div class="stats">
-        <div class="stat-card" aria-label="FTP en watts">
-          <span>FTP</span>
-          <strong id="ftp-watts">0 W</strong>
+        <div class="stat-card metric">
+          <span class="label">FTP (W)</span>
+          <span class="value" id="ftp-watts">0 W</span>
         </div>
-        <div class="stat-card" aria-label="FTP en watts par kilo">
-          <span>W/kg</span>
-          <strong id="ftp-wkg">0.00 W/kg</strong>
+        <div class="stat-card metric">
+          <span class="label">FTP normalisée (W/kg)</span>
+          <span class="value" id="ftp-wkg">0.00 W/kg</span>
         </div>
       </div>
-      <div>
+      <div class="stack-4">
         <h3>Zones d’entraînement (table Coggan)</h3>
-        <table aria-describedby="zone-helper">
-          <caption id="zone-helper">Plages de puissance basées sur ta FTP actuelle. La barre colorée illustre la zone de travail, la colonne RPE décrit l’effort perçu et la dernière colonne précise l’objectif et la durée conseillée.</caption>
-          <thead>
-            <tr>
-              <th scope="col">Zone</th>
-              <th scope="col">Plage de puissance</th>
-              <th scope="col">RPE / sensations</th>
-              <th scope="col">Objectif &amp; durée</th>
-            </tr>
-          </thead>
-          <tbody id="zone-table"></tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="table" aria-describedby="zone-helper">
+            <caption id="zone-helper" class="sr-only">Plages de puissance basées sur ta FTP actuelle. La barre colorée illustre la zone de travail, la colonne RPE décrit l’effort perçu et la dernière colonne précise l’objectif et la durée conseillée.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Zone</th>
+                <th scope="col">Plage de puissance</th>
+                <th scope="col">RPE / sensations</th>
+                <th scope="col">Objectif &amp; durée</th>
+              </tr>
+            </thead>
+            <tbody id="zone-table"></tbody>
+          </table>
+        </div>
       </div>
-      <div class="plan" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
-        <h3 id="plan-heading">Plan d’entraînement personnalisé</h3>
-        <p id="plan-description">Renseigne ta disponibilité et ton objectif pour générer une semaine type.</p>
+      <div class="plan stack-4" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
+        <h3>Plan d’entraînement (semaine type)</h3>
         <ul id="plan-list">
           <li>Choisis une méthode puis calcule ta FTP pour recevoir un plan ciblé.</li>
         </ul>
@@ -576,60 +936,68 @@
       <p id="motivation">Tu es prêt à progresser 🚴‍♂️ !</p>
     </section>
 
-    <section id="history" aria-live="polite">
+    <section id="history" aria-live="polite" class="section card stack-4">
       <div class="history-header">
-        <h2>Historique des calculs</h2>
-        <button id="history-clear" type="button">Effacer l’historique</button>
+        <h2 class="card-title">Historique des calculs</h2>
+        <button id="history-clear" type="button" class="btn btn-secondary">Effacer l’historique</button>
       </div>
-      <p id="history-empty">Réalise un calcul pour remplir l’historique.</p>
+      <p id="history-empty" class="muted">Réalise un calcul pour remplir l’historique.</p>
       <ul id="history-list" aria-live="polite"></ul>
     </section>
 
-    <section aria-labelledby="guide-tests">
-      <h2 id="guide-tests">Comprendre tes tests FTP</h2>
-      <p>Le test de 20 minutes est rapide et fiable. Tu pédales à fond pendant vingt minutes puis le calculateur retire 5&nbsp;% pour estimer ton effort sur une heure. Le test ramp augmente la puissance chaque minute jusqu’à l’échec : nous retenons 75&nbsp;% de la dernière minute complète.</p>
-      <p>Pas encore équipé ? Choisis l’estimation par niveau. C’est pratique pour planifier tes séances ou pour suivre une progression simple sans stress.</p>
+    <section aria-labelledby="guide-tests" class="section card stack-4">
+      <div class="stack-2">
+        <h2 id="guide-tests" class="card-title">Comprendre tes tests FTP</h2>
+        <p>Le test de 20 minutes est rapide et fiable. Tu pédales à fond pendant vingt minutes puis le calculateur retire 5&nbsp;% pour estimer ton effort sur une heure. Le test ramp augmente la puissance chaque minute jusqu’à l’échec : nous retenons 75&nbsp;% de la dernière minute complète.</p>
+        <p>Pas encore équipé ? Choisis l’estimation par niveau. C’est pratique pour planifier tes séances ou pour suivre une progression simple sans stress.</p>
+      </div>
     </section>
 
-    <section aria-labelledby="conseils">
-      <h2 id="conseils">Conseils pour progresser en sécurité</h2>
-      <ul>
-        <li>Échauffe-toi au moins 15 minutes avant chaque test pour protéger tes muscles.</li>
-        <li>Hydrate-toi régulièrement, même en intérieur sur home-trainer.</li>
-        <li>Dors suffisamment : la récupération est la clé pour augmenter ta FTP.</li>
-        <li>Ajoute une sortie facile en Z1-Z2 pour consolider ton endurance de base.</li>
-      </ul>
+    <section aria-labelledby="conseils" class="section card stack-4">
+      <div class="stack-2">
+        <h2 id="conseils" class="card-title">Conseils pour progresser en sécurité</h2>
+        <ul class="clean">
+          <li>Échauffe-toi au moins 15 minutes avant chaque test pour protéger tes muscles.</li>
+          <li>Hydrate-toi régulièrement, même en intérieur sur home-trainer.</li>
+          <li>Dors suffisamment : la récupération est la clé pour augmenter ta FTP.</li>
+          <li>Ajoute une sortie facile en Z1-Z2 pour consolider ton endurance de base.</li>
+        </ul>
+      </div>
     </section>
 
     <!-- AFFILIATE_BLOCK -->
-    <section id="affiliation" aria-labelledby="affiliation-title">
-      <h2 id="affiliation-title">Capteurs &amp; home-trainers recommandés</h2>
-      <ul>
-        <li>Capteur de puissance – <a href="#">Voir le prix</a></li>
-        <li>Home-trainer connecté – <a href="#">Voir le prix</a></li>
-        <li>Montre GPS vélo – <a href="#">Voir le prix</a></li>
-      </ul>
-      <p><em>Liens affiliés : je peux percevoir une petite commission, sans surcoût pour toi.</em></p>
+    <section id="affiliation" aria-labelledby="affiliation-title" class="section card stack-4">
+      <div class="stack-2">
+        <h2 id="affiliation-title" class="card-title">Capteurs &amp; home-trainers recommandés</h2>
+        <ul class="clean">
+          <li>Capteur de puissance – <a href="#">Voir le prix</a></li>
+          <li>Home-trainer connecté – <a href="#">Voir le prix</a></li>
+          <li>Montre GPS vélo – <a href="#">Voir le prix</a></li>
+        </ul>
+        <p><em>Liens affiliés : je peux percevoir une petite commission, sans surcoût pour toi.</em></p>
+      </div>
     </section>
     <!-- END AFFILIATE_BLOCK -->
 
-    <section aria-labelledby="faq-title">
-      <h2 id="faq-title">FAQ FTP cyclisme</h2>
-      <div class="faq-item">
-        <h3>Comment calculer ma FTP ?</h3>
-        <p>Réalise un test 20 minutes à fond, un test ramp ou utilise l’estimation par niveau. Ensuite, clique sur « Calculer ma FTP » pour obtenir ton résultat.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Quelle est la bonne FTP pour un cycliste amateur ?</h3>
-        <p>Un cycliste amateur se situe souvent entre 2 et 4&nbsp;W/kg. Avec un suivi régulier, tu peux viser une progression de 5&nbsp;% tous les deux mois.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Quelle différence entre FTP et W/kg ?</h3>
-        <p>La FTP exprime ta puissance pure en watts. Les watts par kilo comparent ta puissance à ton poids et donnent une vision plus juste de tes performances en côte.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Quand refaire un test FTP ?</h3>
-        <p>Teste-toi toutes les 6 à 8 semaines, ou après un bloc d’entraînement structuré, pour valider les progrès et adapter les intensités.</p>
+    <section aria-labelledby="faq-title" class="section card stack-4">
+      <div class="stack-4">
+        <h2 id="faq-title" class="card-title">FAQ FTP cyclisme</h2>
+        <div class="faq-item">
+          <h3>Comment calculer ma FTP ?</h3>
+          <p>Réalise un test 20 minutes à fond, un test ramp ou utilise l’estimation par niveau. Ensuite, clique sur « Calculer ma FTP » pour obtenir ton résultat.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Quelle est la bonne FTP pour un cycliste amateur ?</h3>
+          <p>Un cycliste amateur se situe souvent entre 2 et 4&nbsp;W/kg. Avec un suivi régulier, tu peux viser une progression de 5&nbsp;% tous les deux mois.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Quelle différence entre FTP et W/kg ?</h3>
+          <p>La FTP exprime ta puissance pure en watts. Les watts par kilo comparent ta puissance à ton poids et donnent une vision plus juste de tes performances en côte.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Quand refaire un test FTP ?</h3>
+          <p>Teste-toi toutes les 6 à 8 semaines, ou après un bloc d’entraînement structuré, pour valider les progrès et adapter les intensités.</p>
+        </div>
       </div>
     </section>
 
@@ -738,7 +1106,6 @@
         max: 0.55,
         description: 'Récupération facile',
         rpe: 'RPE 1-2/10 – Très facile, conversation aisée',
-        couleur: '#9CCC65',
         dureeConseillee: '45 à 120 min et plus'
       },
       {
@@ -748,7 +1115,6 @@
         max: 0.75,
         description: 'Sorties longues',
         rpe: 'RPE 2-3/10 – Stable, respiration contrôlée',
-        couleur: '#66BB6A',
         dureeConseillee: '60 à 180 min'
       },
       {
@@ -758,7 +1124,6 @@
         max: 0.90,
         description: 'Souffle régulier',
         rpe: 'RPE 3-4/10 – Soutenu mais confortable',
-        couleur: '#FFCA28',
         dureeConseillee: '20 à 60 min'
       },
       {
@@ -768,7 +1133,6 @@
         max: 1.05,
         description: 'Allure chrono',
         rpe: 'RPE 5-6/10 – Dur mais contrôlé',
-        couleur: '#FFA726',
         dureeConseillee: '10 à 30 min par blocs'
       },
       {
@@ -778,7 +1142,6 @@
         max: 1.20,
         description: 'Efforts intenses',
         rpe: 'RPE 7-8/10 – Respiration haletante',
-        couleur: '#FB8C00',
         dureeConseillee: '3 à 8 min par répétition'
       },
       {
@@ -788,7 +1151,6 @@
         max: 1.50,
         description: 'Sprints courts',
         rpe: 'RPE 9/10 – Explosion maximale',
-        couleur: '#F4511E',
         dureeConseillee: '30 s à 3 min par répétition'
       },
       {
@@ -798,7 +1160,6 @@
         max: Infinity,
         description: 'Démarrages explosifs',
         rpe: 'RPE 10/10 – Effort total',
-        couleur: '#E53935',
         dureeConseillee: 'Jusqu’à 30 s'
       }
     ];
@@ -880,33 +1241,27 @@
 
     function updateZones(ftp) {
       zoneTable.innerHTML = '';
-      const intensityMax = 1.6;
-      zoneDefs.forEach(zone => {
+      zoneDefs.forEach((zone, index) => {
+        const minW = ftp * zone.min;
+        const maxW = zone.max === Infinity ? Infinity : ftp * zone.max;
         const tr = document.createElement('tr');
-        const minWatts = zone.min === 0 ? 0 : ftp * zone.min;
-        const maxWatts = zone.max === Infinity ? Infinity : ftp * zone.max;
-        const cappedMin = Math.min(zone.min, intensityMax);
-        const cappedMax = zone.max === Infinity ? intensityMax : Math.min(zone.max, intensityMax);
-        const fillStart = Math.min((cappedMin / intensityMax) * 100, 100);
-        const rawWidth = ((cappedMax - cappedMin) / intensityMax) * 100;
-        const minVisibleWidth = cappedMax > cappedMin ? Math.max(rawWidth, 6) : 6;
-        const availableWidth = 100 - fillStart;
-        const fillWidth = Math.max(Math.min(minVisibleWidth, availableWidth), 0);
-        const zoneClass = `zone-bar zone-bar--${zone.label.toLowerCase()}`;
-        const fillStyles = `--fill-start:${fillStart}%;--fill-width:${fillWidth}%;--zone-color:${zone.couleur};`;
+        const fillWidth = zone.max === Infinity ? 1 : Math.max(0, zone.max - zone.min);
+        const fillStart = Math.max(0, zone.min);
+        const widthPercent = zone.max === Infinity ? 100 : Math.min(100, (fillWidth / Math.max(1, zone.max)) * 100);
+        const startPercent = Math.min(100, (fillStart / Math.max(1, zone.max)) * 100);
         tr.innerHTML = `
-          <td><span class="zone-tag" style="--zone-color:${zone.couleur};">${zone.label}</span> ${zone.name}</td>
           <td>
-            <span class="zone-range">${formatRange(minWatts, maxWatts)}</span>
-            <div class="${zoneClass}" aria-hidden="true">
-              <span class="zone-bar__fill" style="${fillStyles}"></span>
-            </div>
+            <span class="zone-tag">${zone.label} · ${zone.name}</span>
+          </td>
+          <td>
+            <span class="zone-range">${ftp ? formatRange(minW, maxW) : '—'}</span>
+            <span class="zone-duration">${zone.dureeConseillee}</span>
+            <span class="zone-bar zone-bar--z${index + 1}" style="--fill-width:${widthPercent}%; --fill-start:${startPercent}%">
+              <span class="zone-bar__fill"></span>
+            </span>
           </td>
           <td>${zone.rpe}</td>
-          <td>
-            <strong>${zone.description}</strong><br>
-            <span class="zone-duration">${zone.dureeConseillee}</span>
-          </td>`;
+          <td>${zone.description}</td>`;
         zoneTable.appendChild(tr);
       });
     }
