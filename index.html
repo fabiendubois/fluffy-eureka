@@ -510,6 +510,32 @@
           </div>
         </div>
       </fieldset>
+      <fieldset>
+        <legend>Personnalisation du plan</legend>
+        <div class="input-row">
+          <label for="seances">Disponibilité hebdomadaire
+            <select id="seances" name="seances">
+              <option value="2">2 séances</option>
+              <option value="3" selected>3 séances</option>
+              <option value="4">4 séances</option>
+            </select>
+          </label>
+          <label for="objectif">Objectif principal
+            <select id="objectif" name="objectif">
+              <option value="endurance" selected>Endurance</option>
+              <option value="intensite">Intensité</option>
+              <option value="grimpe">Grimpe</option>
+            </select>
+          </label>
+          <label for="duree">Temps par séance
+            <select id="duree" name="duree">
+              <option value="45">45 min</option>
+              <option value="60" selected>60 min</option>
+              <option value="90">90 min</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
       <button type="submit">Calculer ma FTP</button>
     </form>
 
@@ -541,7 +567,8 @@
         </table>
       </div>
       <div class="plan" aria-live="polite" aria-label="Plan d'entraînement personnalisé">
-        <h3>Plan d’entraînement (semaine type)</h3>
+        <h3 id="plan-heading">Plan d’entraînement personnalisé</h3>
+        <p id="plan-description">Renseigne ta disponibilité et ton objectif pour générer une semaine type.</p>
         <ul id="plan-list">
           <li>Choisis une méthode puis calcule ta FTP pour recevoir un plan ciblé.</li>
         </ul>
@@ -620,6 +647,8 @@
     const ftpWatts = document.getElementById('ftp-watts');
     const ftpWkg = document.getElementById('ftp-wkg');
     const zoneTable = document.getElementById('zone-table');
+    const planHeading = document.getElementById('plan-heading');
+    const planDescription = document.getElementById('plan-description');
     const planList = document.getElementById('plan-list');
     const motivation = document.getElementById('motivation');
     const historyList = document.getElementById('history-list');
@@ -627,21 +656,78 @@
     const historyClearBtn = document.getElementById('history-clear');
 
     const workouts = {
-      debutant: [
-        'Séance 1 : 45 min en Z2 + 3 accélérations de 1 min en Z4.',
-        'Séance 2 : 30 min échauffement, 3 × 5 min en Z3 avec 3 min Z1 entre, retour au calme.',
-        'Séance 3 : Sortie longue 90 min en Z2 avec 10 min finales en Z3.'
-      ],
-      intermediaire: [
-        'Séance 1 : 20 min Z2 puis 4 × 4 min en Z4, récupération 3 min Z1.',
-        'Séance 2 : 75 min endurance, intégrer 2 blocs de 12 min en Z3.',
-        'Séance 3 : 6 × 3 min en Z5 avec 3 min faciles, finir par 15 min Z2.'
-      ],
-      avance: [
-        'Séance 1 : 3 × 10 min en Z4-Z5, récupération 5 min Z2 entre les blocs.',
-        'Séance 2 : 2 h endurance avec 5 sprints de 15 s en Z6, récupération complète.',
-        'Séance 3 : 5 × 6 min en Z5, récupération 4 min, finir par 20 min Z3.'
-      ]
+      debutant: {
+        endurance: [
+          '45 min en Z2 avec 5 accélérations de 30 s en Z3, récupération 2 min en Z1.',
+          'Sortie longue 60 à 75 min en Z2, cadence souple et respiration contrôlée.',
+          '3 × 8 min en Z3 avec 4 min faciles entre les blocs.',
+          'Sortie libre de 60 min en Z1-Z2 pour travailler la vélocité.'
+        ],
+        intensite: [
+          'Échauffement 15 min puis 4 × 3 min en Z4, récupération 3 min en Z1.',
+          'Pyramide 1-2-3-2-1 min en Z5 avec récupérations égales au temps d’effort.',
+          '30 min en Z2 puis 6 sprints de 20 s en Z6, récupération 2 min souple.',
+          'Sortie aisée 50 min en Z2 pour assimiler la charge.'
+        ],
+        grimpe: [
+          '4 × 5 min en côte à 60 rpm en Z3, récupération en descente tranquille.',
+          'Sortie vallonnée 75 min en Z2-Z3 en restant assis dans les bosses.',
+          '8 × 2 min en Z4 sur pente modérée, récupération 3 min faciles.',
+          'Grimpe technique : 45 min avec 6 × 1 min en force à 55 rpm.'
+        ]
+      },
+      intermediaire: {
+        endurance: [
+          '60 min en Z2 avec 2 × 10 min en Z3 au milieu de la séance.',
+          'Sortie longue 90 min en Z2, terminer par 10 min en Z3.',
+          '4 × 12 min tempo en Z3, récupération 4 min en Z1.',
+          'Sortie récupération 60 min en Z1-Z2 axée vélocité.'
+        ],
+        intensite: [
+          'Échauffement complet puis 5 × 4 min en Z5, récupération 3 min.',
+          '3 × 10 min au seuil en Z4, récupération 5 min souple.',
+          '8 × 30 s en Z6-Z7 avec 4 min faciles entre les sprints.',
+          'Endurance active 75 min en Z2 avec 4 × 1 min de cadence très élevée.'
+        ],
+        grimpe: [
+          '6 × 5 min en Z4 sur pente régulière, récupération 4 min en Z2.',
+          'Sortie montagne 2 h en Z2 avec 3 bosses de 10 min en Z3.',
+          '10 × 1 min à 60 rpm en Z5 pour développer la force, récupération 2 min.',
+          '45 min alternant 2 min assis / 2 min en danseuse en Z3.'
+        ]
+      },
+      avance: {
+        endurance: [
+          '2 × 20 min tempo entre Z3 et Z4, récupération 10 min en Z2.',
+          'Sortie endurance de 2 h avec 3 × 15 min en Z3 réparties sur la sortie.',
+          'Bloc 90 min en Z2 suivi de 10 min en Z4 pour finir.',
+          'Sortie récupération 75 min en Z1-Z2 avec exercices de cadence.'
+        ],
+        intensite: [
+          '4 × 8 min en Z5, récupération 4 min contrôlée.',
+          '2 × 15 min au seuil haut (Z4-Z5), récupération 8 min en Z2.',
+          '3 blocs de 5 × 1 min en Z6 avec 1 min de récupération, 8 min entre blocs.',
+          'Endurance soutenue 90 min en Z2 ponctuée de 6 × 10 s en Z7.'
+        ],
+        grimpe: [
+          '3 × 12 min en Z4 sur pente à 6 %, récupération 6 min.',
+          'Sortie grimpe 1 h 45 avec 2 ascensions de 20 min en Z3.',
+          '8 × 3 min en Z5 à 55 rpm pour la force, récupération en descente.',
+          'Sortie technique 75 min avec relances hors des virages en Z4.'
+        ]
+      }
+    };
+
+    const levelLabels = {
+      debutant: 'Débutant',
+      intermediaire: 'Intermédiaire',
+      avance: 'Avancé'
+    };
+
+    const objectiveLabels = {
+      endurance: 'Endurance',
+      intensite: 'Intensité',
+      grimpe: 'Grimpe'
     };
 
     const zoneDefs = [
@@ -738,24 +824,58 @@
     }
 
     function determineLevel(mode, ftp, weight) {
-      if (mode === 'niveau') {
-        const levelSelect = document.getElementById('niveau');
-        return levelSelect.value;
+      const levelSelect = document.getElementById('niveau');
+      const objectiveSelect = document.getElementById('objectif');
+      const sessionsSelect = document.getElementById('seances');
+      const durationSelect = document.getElementById('duree');
+
+      let level = levelSelect ? levelSelect.value : 'debutant';
+
+      if (mode !== 'niveau') {
+        const ratio = ftp && weight ? ftp / weight : 0;
+        if (ratio < 2.6) level = 'debutant';
+        else if (ratio < 3.5) level = 'intermediaire';
+        else level = 'avance';
       }
-      const ratio = ftp && weight ? ftp / weight : 0;
-      if (ratio < 2.6) return 'debutant';
-      if (ratio < 3.5) return 'intermediaire';
-      return 'avance';
+
+      const sessionsValue = parseInt(sessionsSelect?.value || '3', 10);
+      const durationValue = parseInt(durationSelect?.value || '60', 10);
+
+      return {
+        level,
+        objective: objectiveSelect?.value || 'endurance',
+        sessions: Number.isFinite(sessionsValue) && sessionsValue > 0 ? sessionsValue : 3,
+        duration: Number.isFinite(durationValue) && durationValue > 0 ? durationValue : 60
+      };
     }
 
-    function renderPlan(levelKey) {
-      const items = workouts[levelKey] || workouts.debutant;
+    function renderPlan(planConfig) {
+      const { level, objective, sessions, duration } = planConfig;
+      const levelPlans = workouts[level] || workouts.debutant;
+      const objectivePlans = levelPlans?.[objective] || levelPlans?.endurance || [];
+      const totalSessions = Number.isFinite(sessions) && sessions > 0 ? sessions : 3;
+      const sessionDuration = Number.isFinite(duration) && duration > 0 ? duration : 60;
+      const planItems = Array.isArray(objectivePlans) ? [...objectivePlans] : [];
+      const fallbackText = `Sortie libre : ${sessionDuration} min en Z2 pour consolider l’endurance.`;
+
+      while (planItems.length < totalSessions) {
+        planItems.push(fallbackText);
+      }
+
+      const finalPlan = planItems.slice(0, totalSessions);
+
       planList.innerHTML = '';
-      items.forEach(text => {
+      finalPlan.forEach((text, index) => {
         const li = document.createElement('li');
-        li.textContent = text;
+        li.textContent = `Séance ${index + 1} : ${text}`;
         planList.appendChild(li);
       });
+
+      const levelLabel = levelLabels[level] || levelLabels.debutant;
+      const objectiveLabel = objectiveLabels[objective] || objectiveLabels.endurance;
+      const sessionWord = totalSessions > 1 ? 'séances' : 'séance';
+      planHeading.textContent = `${levelLabel} · ${objectiveLabel} · ${totalSessions} ${sessionWord}/semaine`;
+      planDescription.textContent = `Durée cible : ~${sessionDuration} min par séance. Ajuste l’échauffement et le retour au calme selon ta fatigue.`;
     }
 
     function updateZones(ftp) {
@@ -884,8 +1004,8 @@
       ftpWkg.textContent = `${wkg.toFixed(2)} W/kg`;
 
       updateZones(ftp);
-      const levelKey = determineLevel(mode, ftp, weight);
-      renderPlan(levelKey);
+      const planConfig = determineLevel(mode, ftp, weight);
+      renderPlan(planConfig);
 
       motivation.textContent = 'Tu es prêt à progresser 🚴‍♂️ ! Continue sur cette lancée !';
 
