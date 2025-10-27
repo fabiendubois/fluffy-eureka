@@ -62,6 +62,27 @@
       --z-modal: 100;
     }
 
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0F1115;
+      --surface: #151822;
+      --text: #F3F4F6;
+      --muted: #9CA3AF;
+      --border: #242736;
+      --accent: #FF7A1A;
+      --accent-50: #2A190E;
+      --accent-solid: #D45F00;
+      --accent-solid-700: #BF4A00;
+    }
+
+    :root[data-theme="dark"] .table thead th {
+      background: #1A1F2B;
+    }
+
+    :root[data-theme="dark"] .table tbody tr:nth-child(even) {
+      background: #121521;
+    }
+
     html {
       box-sizing: border-box;
     }
@@ -77,6 +98,25 @@
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       margin: 0;
+    }
+
+    .theme-toggle {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .stack-8 > .theme-toggle + * {
+      margin-top: var(--space-4);
+    }
+
+    .theme-toggle__icon {
+      font-size: 1.1em;
+    }
+
+    .theme-toggle__label {
+      font-weight: var(--fw-medium);
     }
 
     img, svg, video {
@@ -761,7 +801,8 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme]) {
+        color-scheme: dark;
         --bg: #0F1115;
         --surface: #151822;
         --text: #F3F4F6;
@@ -773,15 +814,37 @@
         --accent-solid-700: #BF4A00;
       }
 
-      .table thead th {
+      :root:not([data-theme]) .table thead th {
         background: #1A1F2B;
       }
 
-      .table tbody tr:nth-child(even) {
+      :root:not([data-theme]) .table tbody tr:nth-child(even) {
         background: #121521;
       }
     }
   </style>
+  <script>
+    (function() {
+      try {
+        const storageKey = 'theme-preference';
+        const storedTheme = localStorage.getItem(storageKey);
+        const prefersDark = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          : false;
+        const theme = storedTheme === 'dark' || storedTheme === 'light'
+          ? storedTheme
+          : (prefersDark ? 'dark' : 'light');
+
+        if (theme === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+        } else {
+          delete document.documentElement.dataset.theme;
+        }
+      } catch (error) {
+        console.warn('Impossible d\'initialiser le thème :', error);
+      }
+    })();
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -817,6 +880,12 @@
 </head>
 <body>
   <main class="container stack-8">
+    <div class="theme-toggle">
+      <button id="theme-toggle" type="button" class="btn btn-ghost" aria-pressed="false">
+        <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+        <span class="theme-toggle__label">Mode sombre</span>
+      </button>
+    </div>
     <header class="section center stack-4">
       <span class="badge">Calculateur FTP cyclisme</span>
       <h1>Calcule ta FTP en quelques minutes</h1>
@@ -1009,6 +1078,81 @@
   </main>
 
   <script>
+    const THEME_STORAGE_KEY = 'theme-preference';
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleIcon = themeToggleBtn?.querySelector('.theme-toggle__icon');
+    const themeToggleLabel = themeToggleBtn?.querySelector('.theme-toggle__label');
+    const prefersDarkScheme = window.matchMedia
+      ? window.matchMedia('(prefers-color-scheme: dark)')
+      : null;
+
+    function readStoredTheme() {
+      try {
+        const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        return storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : null;
+      } catch (error) {
+        console.warn('Impossible de lire le thème enregistré :', error);
+        return null;
+      }
+    }
+
+    function applyTheme(theme) {
+      const isDark = theme === 'dark';
+      if (isDark) {
+        document.documentElement.dataset.theme = 'dark';
+      } else {
+        delete document.documentElement.dataset.theme;
+      }
+
+      if (themeToggleBtn) {
+        themeToggleBtn.setAttribute('aria-pressed', String(isDark));
+        themeToggleBtn.setAttribute('aria-label', isDark ? 'Passer en mode clair' : 'Passer en mode sombre');
+      }
+
+      if (themeToggleIcon) {
+        themeToggleIcon.textContent = isDark ? '☀️' : '🌙';
+      }
+
+      if (themeToggleLabel) {
+        themeToggleLabel.textContent = isDark ? 'Mode clair' : 'Mode sombre';
+      }
+    }
+
+    let currentTheme = readStoredTheme();
+    if (!currentTheme) {
+      currentTheme = document.documentElement.dataset.theme === 'dark'
+        ? 'dark'
+        : (prefersDarkScheme && prefersDarkScheme.matches ? 'dark' : 'light');
+    }
+
+    applyTheme(currentTheme);
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(currentTheme);
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+        } catch (error) {
+          console.warn('Impossible d\'enregistrer le thème :', error);
+        }
+      });
+    }
+
+    const handleSchemeChange = event => {
+      if (readStoredTheme()) return;
+      currentTheme = event.matches ? 'dark' : 'light';
+      applyTheme(currentTheme);
+    };
+
+    if (prefersDarkScheme) {
+      if (typeof prefersDarkScheme.addEventListener === 'function') {
+        prefersDarkScheme.addEventListener('change', handleSchemeChange);
+      } else if (typeof prefersDarkScheme.addListener === 'function') {
+        prefersDarkScheme.addListener(handleSchemeChange);
+      }
+    }
+
     const modeRadios = document.querySelectorAll('input[name="mode"]');
     const panels = document.querySelectorAll('.method-panel');
     const ftpForm = document.getElementById('ftp-form');
